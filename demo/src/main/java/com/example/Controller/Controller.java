@@ -14,8 +14,8 @@ public class Controller {
         this.view = new View();
     }
     
-    public void handleLogin(String email, String password){
-        this.model.login(email, password);
+    public boolean handleLogin(String email, String password){
+        return this.model.login(email, password);
     }
 
     public void handleRegistration(String email, String password, Role role) {
