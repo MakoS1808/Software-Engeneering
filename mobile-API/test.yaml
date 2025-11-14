@@ -1,0 +1,150 @@
+openapi: 3.0.4
+info:
+  title: Swagger API for mobile Receipt Service
+  description: |-
+    This is an API for use of the companies receipt manageing service.
+  version: 1.0.0
+servers:
+  - url: https://ReceiptManager.example.com/api/v1
+tags:
+  - name: receipt
+    description: Everything about your Receipts
+security:
+    - api_key: []
+paths:
+  /receipt:
+    get:
+      tags:
+        - receipt
+      summary: Get all receipt in the system.
+      description: Get all receipt in the system.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Receipt'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    post:
+        tags:
+          - receipt
+        summary: Upload a new receipt to the system.
+        description: Upload a new receipt to the system.
+        requestBody:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Receipt'
+        responses:
+          '201':
+            description: Receipt Created
+          '400':
+            description: Invalid input
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/Error"
+          '401':
+            description: Unauthorized
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/Error"
+          default:
+            description: Unexpected error
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/Error"
+          
+  /receipt/{status}:
+    get:
+      tags:
+        - receipt
+      summary: Gets all approved Receipts.
+      description: Gets all approved Receipts.
+      parameters:
+        - in: path
+          name: status
+          schema:
+            type: string
+          required: true
+          description: Current status of receipts to fetch.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Receipt'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    Receipt:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "34adfass4324aGhg"
+        amount:
+          type: integer
+          format: int64
+          example: 78432
+        created:
+          type: string
+          format: date-time
+        status:
+          type: string
+          description: Receipt Status
+          example: approved
+          enum:
+            - approved
+            - rejected
+            - pending
+            - processing
+            - fraud
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+        - code
+        - message
+  
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
